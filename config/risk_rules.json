@@ -1,0 +1,33 @@
+{
+  "unilateral_termination": {
+    "keywords": ["sole discretion", "terminate at any time"],
+    "intent": "Right",
+    "severity": "High",
+    "explanation": "One party can end the contract without protection for the other party."
+  },
+  "short_payment_window": {
+    "keywords": ["within 15 days", "within fifteen days"],
+    "intent": "Obligation",
+    "severity": "Medium",
+    "explanation": "Short payment timelines may strain cash flow for SMEs."
+  },
+  "confidentiality_obligation": {
+    "keywords": ["shall not disclose", "confidential information"],
+    "intent": "Prohibition",
+    "severity": "Low",
+    "explanation": "Standard confidentiality obligation."
+  }
+  ,
+"ambiguous_language": {
+  "keywords": [
+    "reasonable efforts",
+    "as applicable",
+    "from time to time",
+    "sole discretion"
+  ],
+  "intent": "Neutral",
+  "severity": "Medium",
+  "explanation": "Ambiguous language may be interpreted unfavorably for small businesses."
+}
+
+}
