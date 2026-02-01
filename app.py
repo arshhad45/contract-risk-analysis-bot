@@ -8,7 +8,6 @@ from reporting.pdf_export import export_pdf
 
 
 # ---------------- MOCK LLM ----------------
-# Replace with GPT-4 / Claude only if allowed
 def mock_llm(prompt):
     return "This clause has been explained in simple business language."
 
@@ -22,19 +21,17 @@ st.set_page_config(
 st.title("📄 Contract Risk Analysis Bot")
 
 
-# ---------------- FILE UPLOAD ----------------
-uploaded_file = st.file_uploader(
-    "Upload Contract (PDF, DOCX, or TXT)",
-    type=["pdf", "docx", "txt"]
-)
-
-if uploaded_file:
-    # ---- Save uploaded file temporarily (CRITICAL FIX) ----
+# ---------------- CACHED ANALYSIS FUNCTION ----------------
+@st.cache_data(show_spinner=False)
+def run_analysis(file_bytes, file_name):
+    """
+    Runs contract analysis only once per uploaded file.
+    Prevents infinite reruns and browser freeze.
+    """
     with tempfile.NamedTemporaryFile(delete=False) as tmp:
-        tmp.write(uploaded_file.read())
+        tmp.write(file_bytes)
         tmp_path = tmp.name
 
-    # Wrapper to match pipeline expectations (.path, .name, .read)
     class TempFileWrapper:
         def __init__(self, path, name):
             self.path = path
@@ -44,15 +41,31 @@ if uploaded_file:
             with open(self.path, "rb") as f:
                 return f.read()
 
-    file_wrapper = TempFileWrapper(tmp_path, uploaded_file.name)
+    wrapped_file = TempFileWrapper(tmp_path, file_name)
+    result = analyze_contract(wrapped_file, mock_llm)
 
-    # ---------------- ANALYSIS ----------------
-    with st.spinner("Analyzing contract..."):
-        result = analyze_contract(file_wrapper, mock_llm)
-        summary = generate_summary(result)
-
-    # Remove temp file (confidentiality)
     os.remove(tmp_path)
+    return result
+
+
+# ---------------- FILE UPLOAD ----------------
+uploaded_file = st.file_uploader(
+    "Upload Contract (PDF, DOCX, or TXT)",
+    type=["pdf", "docx", "txt"]
+)
+
+if uploaded_file:
+
+    # ---------- RUN ANALYSIS ONLY ONCE ----------
+    if "analysis_result" not in st.session_state:
+        with st.spinner("Analyzing contract..."):
+            st.session_state.analysis_result = run_analysis(
+                uploaded_file.getvalue(),
+                uploaded_file.name
+            )
+
+    result = st.session_state.analysis_result
+    summary = generate_summary(result)
 
     st.success("Analysis completed")
 
@@ -67,7 +80,7 @@ if uploaded_file:
         st.markdown("---")
         st.write(f"**Clause {clause['clause_id']}**")
 
-        if clause["unfavorable"]:
+        if clause.get("unfavorable"):
             st.error("⚠ Unfavorable Clause")
 
         st.write(clause["text"])
@@ -79,15 +92,18 @@ if uploaded_file:
     # ---------------- PDF EXPORT ----------------
     st.subheader("📄 Export Report")
 
+    if "pdf_ready" not in st.session_state:
+        st.session_state.pdf_ready = False
+
     if st.button("📥 Generate PDF Report"):
         export_pdf(result, summary, filename="contract_report.pdf")
+        st.session_state.pdf_ready = True
 
+    if st.session_state.pdf_ready:
         with open("contract_report.pdf", "rb") as f:
-            pdf_bytes = f.read()
-
-        st.download_button(
-            label="⬇ Download PDF Report",
-            data=pdf_bytes,
-            file_name="contract_report.pdf",
-            mime="application/pdf"
-        )
+            st.download_button(
+                label="⬇ Download PDF Report",
+                data=f,
+                file_name="contract_report.pdf",
+                mime="application/pdf"
+            )

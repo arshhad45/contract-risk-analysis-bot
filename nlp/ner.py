@@ -1,46 +1,26 @@
 import spacy
 from spacy.pipeline import EntityRuler
+from functools import lru_cache
 
-# Create a lightweight English pipeline (NO external model)
-nlp = spacy.blank("en")
 
-# Add EntityRuler for rule-based NER
-ruler = nlp.add_pipe("entity_ruler")
+@lru_cache(maxsize=1)
+def get_nlp():
+    nlp = spacy.blank("en")
+    ruler = nlp.add_pipe("entity_ruler")
 
-# Basic legal / contract entity patterns
-patterns = [
-    # Money
-    {"label": "MONEY", "pattern": [{"TEXT": {"REGEX": "INR|Rs\\.?|₹"}}, {"IS_DIGIT": True}]},
-    {"label": "MONEY", "pattern": [{"IS_DIGIT": True}, {"LOWER": "lakhs"}]},
-    {"label": "MONEY", "pattern": [{"IS_DIGIT": True}, {"LOWER": "crores"}]},
+    patterns = [
+        {"label": "MONEY", "pattern": [{"TEXT": {"REGEX": "INR|Rs\\.?|₹"}}, {"IS_DIGIT": True}]},
+        {"label": "DATE", "pattern": [{"IS_DIGIT": True}, {"LOWER": {"IN": ["days", "months", "years"]}}]},
+        {"label": "ORG", "pattern": [{"IS_TITLE": True}, {"IS_TITLE": True}]},
+        {"label": "GPE", "pattern": [{"IS_TITLE": True}]}
+    ]
 
-    # Dates
-    {"label": "DATE", "pattern": [{"IS_DIGIT": True}, {"LOWER": {"IN": ["days", "months", "years"]}}]},
-    {"label": "DATE", "pattern": [{"IS_DIGIT": True}, {"IS_ALPHA": True}, {"IS_DIGIT": True}]},
-
-    # Organizations
-    {"label": "ORG", "pattern": [{"IS_TITLE": True}, {"IS_TITLE": True}, {"LOWER": {"IN": ["pvt", "ltd", "limited"]}}]},
-    {"label": "ORG", "pattern": [{"IS_TITLE": True}, {"LOWER": "technologies"}]},
-
-    # Locations / Jurisdiction
-    {"label": "GPE", "pattern": [{"IS_TITLE": True}]}
-]
-
-ruler.add_patterns(patterns)
+    ruler.add_patterns(patterns)
+    return nlp
 
 
 def extract_entities(text):
-    """
-    Extract entities using rule-based spaCy pipeline.
-    Cloud-safe (no model downloads).
-    """
+    nlp = get_nlp()
     doc = nlp(text)
 
-    entities = []
-    for ent in doc.ents:
-        entities.append({
-            "text": ent.text,
-            "label": ent.label_
-        })
-
-    return entities
+    return [{"text": ent.text, "label": ent.label_} for ent in doc.ents]
