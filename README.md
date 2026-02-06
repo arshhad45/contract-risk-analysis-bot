@@ -1,27 +1,48 @@
-## Contract Analysis & Risk Assessment Bot
+# Project Description
 
-A GenAI-powered legal assistant that helps small and medium businesses understand complex contracts, identify risks, and receive plain-language explanations before signing agreements.
+Contract Analysis & Risk Assessment Bot
 
 ## Overview
 
-Small and medium enterprises (SMEs) often sign contracts without fully understanding legal language, hidden liabilities, or unfavorable clauses. Legal consultation is expensive and not always accessible.
+The Contract Analysis & Risk Assessment Bot is a GenAI-powered legal assistant designed to help small and medium business (SME) owners understand complex contracts, identify potential risks, and make informed decisions before signing agreements.
 
-The Contract Analysis & Risk Assessment Bot automates contract review by combining NLP and controlled Generative AI to:
+Many SMEs lack access to affordable legal review and often sign contracts without fully understanding unfavorable terms, hidden liabilities, or restrictive clauses. This system addresses that gap by transforming dense legal language into clear, actionable insights using Natural Language Processing (NLP) and controlled Generative AI reasoning.
 
-Analyze contracts clause by clause
+## Problem It Solves
 
-Detect legal and financial risks
+Business contracts such as service agreements, employment contracts, vendor agreements, and partnership deeds often contain:
 
-Explain clauses in simple business language
+One-sided termination rights
 
-Suggest safer negotiation alternatives
+Heavy penalty clauses
 
-Generate downloadable risk reports
+Intellectual property transfers
 
-## Key Features
-## Multi-Format Contract Upload
+Non-compete restrictions
 
-Supports:
+Auto-renewal lock-ins
+
+Jurisdiction limitations
+
+These clauses can expose SMEs to financial, operational, and legal risks.
+
+Manual legal review is:
+
+Expensive
+
+Time-consuming
+
+Not always accessible to small businesses
+
+This project provides an automated, explainable, and affordable first-level contract risk analysis system.
+
+What the System Does
+
+The platform performs end-to-end contract intelligence analysis through a structured pipeline:
+
+1. Document Ingestion
+
+Supports multiple contract formats:
 
 PDF (text-based)
 
@@ -29,35 +50,37 @@ DOC / DOCX
 
 Plain text (.txt)
 
-# Multilingual Processing
+The system extracts and normalizes text for downstream analysis.
 
-Detects English and Hindi contracts
+2. Multilingual Processing
 
-Normalizes Hindi → English internally
+Detects contract language (English / Hindi)
+
+Normalizes Hindi text into English internally for NLP processing
 
 Outputs explanations in simple business English
 
-## Contract Type Classification
+3. Contract Type Classification
 
-Automatically identifies contract types such as:
+Automatically identifies contract categories such as:
 
-Service Agreements
+Service agreements
 
-Employment Contracts
+Employment contracts
 
-Vendor Agreements
+Vendor agreements
 
-Lease Agreements
+Lease agreements
 
-Partnership Deeds
+Partnership deeds
 
-## Clause Extraction
+4. Clause & Sub-Clause Extraction
 
-Splits contracts into structured clauses for granular analysis.
+Contracts are segmented into structured clauses to enable granular risk analysis instead of treating the document as a single block of text.
 
-## Named Entity Recognition
+5. Named Entity Recognition (NER)
 
-Extracts key entities:
+Extracts key legal and business entities, including:
 
 Parties / Organizations
 
@@ -67,11 +90,11 @@ Dates & durations
 
 Jurisdiction locations
 
-Deliverables & obligations
+Obligations & deliverables
 
-⚖ Clause Intent Detection
+6. Clause Intent Detection
 
-Classifies clauses into:
+Each clause is classified into:
 
 Obligation
 
@@ -79,147 +102,101 @@ Right
 
 Prohibition
 
-## Risk Detection Engine
+This helps determine who is responsible, empowered, or restricted.
 
-Identifies unfavorable clauses including:
+7. Risk Detection & Compliance Heuristics
+
+The system identifies high-risk and unfavorable legal constructs such as:
 
 Penalty clauses
 
 Indemnity liabilities
 
-Unilateral termination
+Unilateral termination rights
 
-Auto-renewal lock-ins
+Auto-renewal & lock-in periods
 
 Non-compete restrictions
 
-IP ownership transfers
+Intellectual property transfers
 
-Arbitration & jurisdiction terms
+Arbitration & jurisdiction constraints
 
-Each clause is assigned:
+Each clause is assigned a risk severity level:
 
-Low Risk
+Low
 
-Medium Risk
+Medium
 
-High Risk
+High
 
-## Contract Risk Scoring
+8. Contract-Level Risk Scoring
 
-Generates an overall contract risk rating based on clause-level severity.
+Clause scores are aggregated to compute a composite contract risk rating, enabling quick executive assessment.
 
-## Plain-Language AI Explanations
+9. Plain-Language GenAI Explanations
 
-Uses controlled LLM reasoning to:
+Using controlled LLM reasoning, the system generates:
 
-Explain clauses in simple terms
+Clause-by-clause explanations
 
-Highlight business impact
+Risk impact summaries
 
-Suggest safer alternatives
+Business implications
 
-## The system does not provide legal advice.
+Negotiation-friendly alternatives
 
-## PDF Report Export
+All explanations are delivered in simple, non-legal business language.
 
-Generates downloadable reports containing:
+10. Unfavorable Clause Highlighting
 
-Contract summary
+Clauses deemed high risk are visually flagged to draw immediate attention for review or renegotiation.
 
-Risk distribution
+11. Summary Reports & PDF Export
 
-Clause explanations
+The system generates structured analysis reports including:
 
-Unfavorable clause highlights
+Contract type
 
-## Confidentiality & Audit Logs
+Overall risk score
 
-Contracts processed locally
+Clause risk distribution
 
-No raw text stored
+High-risk clause count
 
-Hash-based audit logging
+Reports can be exported as professional PDFs for legal consultation or management review.
 
-# Architecture Pipeline
-Upload Contract
-      ↓
-Text Extraction
-      ↓
-Language Detection
-      ↓
-Normalization
-      ↓
-Contract Classification
-      ↓
-Clause Splitting
-      ↓
-NER + Intent Detection
-      ↓
-Risk Engine
-      ↓
-LLM Explanation
-      ↓
-Risk Scoring
-      ↓
-PDF Report
+12. Confidentiality & Audit Logging
 
-- Tech Stack
-Layer	Technology
-UI	Streamlit
-Backend	Python
-NLP	spaCy
-GenAI	GPT-class LLM (explanations only)
-Document Parsing	pdfplumber, python-docx
-Reporting	ReportLab
-Storage	Local + JSON audit logs
+To maintain document privacy:
 
-# Installation (Local Setup)
-# Clone repo
-git clone https://github.com/your-username/contract-risk-analysis-bot.git
-cd contract-risk-analysis-bot
+Contracts are processed locally
 
-# Create virtual environment
-python -m venv venv
-venv\Scripts\activate   # Windows
+Only hashed audit logs are stored
 
-# Install dependencies
-pip install -r requirements.txt
+No raw contract text is retained
 
-# Run app
-streamlit run app.py
+This ensures secure handling of sensitive agreements.
 
-# Deployment
+Technology Stack
 
-This project is deployed using Streamlit Community Cloud.
+Frontend/UI: Streamlit
 
-Steps:
+Backend: Python
 
-Push repo to GitHub
+NLP Processing: spaCy, rule-based pipelines
 
-Add requirements.txt
+Generative Reasoning: GPT-class LLM (explanation only)
 
-Deploy via Streamlit Cloud dashboard
+Document Parsing: pdfplumber, python-docx
 
-Set app.py as entry point
+Reporting: ReportLab (PDF generation)
 
-# Sample Use Case
+Storage: Local files + JSON audit logs
 
-Upload a service agreement containing:
+Responsible AI & Compliance
 
-“The Company may terminate this agreement at its sole discretion.”
-
-The system will:
-
-Flag it as High Risk
-
-Explain why it is unfavorable
-
-Suggest a safer termination clause
-
-⚠ Responsible AI Disclaimer
-
-This tool:
+This system:
 
 Does not provide legal advice
 
@@ -229,14 +206,20 @@ Performs heuristic risk detection based on SME best practices
 
 Uses LLMs only for controlled explanation generation
 
-# Impact
+This ensures ethical and competition-compliant deployment.
 
-Helps SMEs:
+Impact
 
-Understand contracts before signing
+By simplifying contract comprehension and surfacing hidden risks, the platform enables SMEs to:
 
-Detect hidden risks
+Avoid unfavorable agreements
 
 Negotiate better terms
 
 Reduce legal exposure
+
+Make informed signing decisions
+
+Conclusion
+
+The Contract Analysis & Risk Assessment Bot bridges the gap between complex legal documentation and business understanding by combining NLP, explainable AI, and structured risk intelligence into a practical, accessible decision-support tool for small and medium enterprises.
